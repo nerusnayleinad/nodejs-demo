@@ -1,4 +1,4 @@
-job('NodeJS-example') {
+job('NodeJS-example-with-Docker') {
     scm {
         git('https://github.com/nerusnayleinad/nodejs-demo.git') {  node -> // is hudson.plugins.git.GitSCM
             node / gitConfigName('nerusnayleinad')
@@ -13,6 +13,14 @@ job('NodeJS-example') {
                          // Manage Jenkins -> Configure Tools -> NodeJS Installations -> Name
     }
     steps {
-        shell("npm install")
+        dockerBuildAndPublish {
+            repositoryName('viejo/nodejs-demo')
+            tag('${GIT_REVISION,length=9}')
+            registryCredentials('dockerhub')
+            forcePull(false)
+            forceTag(false)
+            createFingerprints(false)
+            skipDecorate()
+        }
     }
 }
